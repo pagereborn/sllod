@@ -1,0 +1,52 @@
+       {% if latest_poll_list %}
+       
+    	
+    	 
+    		{% for poll in latest_poll_list %}
+    		
+    			<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+    {{poll.created_by}} asked: 
+    </h3>
+  </div>
+  <div class="panel-body">
+  <a href="{% url 'polls:detail' poll.id %}">{{ poll.message }}</a>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+	
+					
+						{% csrf_token %}
+						{% for option in poll.option_set.all %}
+						
+						<form id="poll_form" action="{% url 'polls:vote' poll.id %}" method="post">
+						{% csrf_token %}
+	    				<div id="choice{{ option.id }}">
+	    					<div class="vote{{ option.id }}">
+	    					{{ option.votes }}
+	    					</div>
+	    					<div class="option{{ option.id }}">
+	    					<input class="poll_vote" type="hidden" autocomplete="off" name="poll_message" value="{{ option.id }}">
+	    					<a id={{poll.id}} rel={{ option.id }} class="poll{{poll.id}}option{{ option.id }}" >{{ option.option_text }}</a>
+	    					</div>
+	    				
+	    				
+	    				</div>
+	    				
+						{% endfor %}
+						</form>
+						
+  </div>
+  <div class="panel-footer">
+  <div class="progress">
+  {% for option in poll.option_set.all %}
+  <div class="progress-bar {{ forloop.counter }}" style="width: {{ option.votes }}00%"></div>
+
+  {% endfor %}
+</div>
+</div>
+</div>
+{% endfor %}
+{% else %}
+    	<p>No polls are available.</p>
+		{% endif %}
+		<!-- Login ends-->

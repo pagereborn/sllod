@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+{% load staticfiles %} 
+{% load account_tags %}
+
+<link href="{% static  "bootstrap/css/bootstrap.css" %}" rel="stylesheet" />
+<link href="{% static  "bootswatch/css/bootstrap.css" %}" rel="stylesheet" />
+<link href="{% static  "bootswatch/css/bootswatch.min.css" %}" rel="stylesheet" />
+<link href="{% static  "css/home.css" %}" rel="stylesheet"/>
+<script src="{% static  "js/jquery-1.11.0.js" %}"></script>
+<script src="{% static  "bootstrap/js/bootstrap.js" %}"></script>
+<script src="{% static  "bootswatch/js/bootswatch.js" %}"></script>
+<script src="{% static  "js/poll.js" %}"></script>
+		
+		<!-- OverLay -->
+        <link href="{% static  "overlay/media/stylesheets/font-awesome.css" %}" rel="stylesheet"/>
+        <link href="{% static  "overlay/media/stylesheets/main.css" %}" rel="stylesheet"/>       
+        <link href="{% static  "overlay/media/stylesheets/shCoreDefault.css" %}" rel="stylesheet"/>        
+        <script src="{% static  "overlay/media/javascripts/shCore.js" %}"></script>
+        <script src="{% static  "overlay/media/javascripts/shBrushJScript.js" %}"></script>
+        <script src="{% static  "overlay/media/javascripts/main.js" %}"></script>
+		<script src="{% static  "overlay/jquery.overlay.js" %}"></script>
+		
+		<!--  NewsFeed -->
+		<link href="{% static  "newsfeed/css/site.css" %}" rel="stylesheet"/>
+		<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+		<script src="{% static  "newsfeed/scripts/jquery.bootstrap.newsbox.min.js" %}" type="text/javascript"></script>
+		<link href="{% static  "css/poll.css" %}" type="text/css" rel="stylesheet">
+<title>Home Page</title>
+
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			<a href="../" class="navbar-brand">Poll</a>
+			<button class="navbar-toggle" type="button" data-toggle="collapse"
+				data-target="#navbar-main">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="navbar-collapse collapse" id="navbar-main">
+			<ul class="nav navbar-nav">
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="#" id="themes">Category <span
+						class="caret"></span></a>
+					<ul class="dropdown-menu" aria-labelledby="themes">
+						<li><a href="../default/">Mix</a></li>
+						<li class="divider"></li>
+						<li><a href="../amelia/">Sports</a></li>
+						<li><a href="../cerulean/">Shopping</a></li>
+						<li><a href="../cosmo/">Social</a></li>
+						<li><a href="../cyborg/">Entertainment</a></li>
+						<li><a href="../darkly/">News</a></li>
+						<li><a href="../flatly/">Politic</a></li>
+						<li><a href="../journal/">Fashion</a></li>
+					</ul></li>
+				<li><a href="../help/">About</a></li>
+				<li><a href="http://news.bootswatch.com">How to</a></li>
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="#" id="download">Join <span
+						class="caret"></span></a>
+					<ul class="dropdown-menu" aria-labelledby="download">
+						<li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
+						<li><a href="./bootstrap.css">bootstrap.css</a></li>
+						<li class="divider"></li>
+						<li><a href="./variables.less">variables.less</a></li>
+						<li><a href="./bootswatch.less">bootswatch.less</a></li>
+					</ul></li>
+			</ul>
+
+			<ul class="nav navbar-nav navbar-right">
+				{% if user.is_authenticated %}
+				<li><a href="account/logout">Log out</a></li> 
+				{% else %}
+				<li><a href="account/login">Log in</a></li> 
+				{% endif %}
+
+
+			</ul>
+
+		</div>
+	</div>
+</div>
+<div class="container">
+	
+	{% if user.is_authenticated %}
+	<!-- Login starts-->
+	<div class="container-fluid">
+	<div class="row-fluid">
+	 <div class="span8">
+		 <div class="well"> 
+                              
+                                  
+                                  <form id="poll_form" class="form-horizontal" role="form" name="poll_form" method="" action="">
+			 <h4>What's New</h4>
+			  <div class="form-group" style="padding:14px;">
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                {{ field.errors }}
+                {{ field.help_text}}
+                {{ field }}
+            {% endfor %}
+            </div>
+			<input class="poll_message" type="hidden" autocomplete="off" name="poll_message" value="">
+           
+            <button id="create_poll" class="btn btn-primary pull-right" type="button">Post</button>
+            <ul class="list-inline">
+            <li><a href=""><i class="glyphicon glyphicon-upload"></i></a></li>
+            <li><a href=""><i class="glyphicon glyphicon-camera"></i></a></li>
+            <li><a href=""><i class="glyphicon glyphicon-map-marker"></i></a></li>
+            </ul>
+        </form>
+         <div id="highlight" class="highlight">
+        </div>
+                                
+                          </div>
+                          <div id="all_polls">
+        {% if latest_poll_list %}
+       
+    	
+    	 
+    		{% for poll in latest_poll_list %}
+    		
+    			<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">
+    {{poll.created_by}} asked: 
+    </h3>
+  </div>
+  <div class="panel-body">
+  <a href="{% url 'polls:detail' poll.id %}">{{ poll.message }}</a>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+	
+					
+						{% csrf_token %}
+						{% for option in poll.option_set.all %}
+						
+						<form id="poll_form" action="{% url 'polls:vote' poll.id %}" method="post">
+						{% csrf_token %}
+	    				<div id="choice{{ option.id }}">
+	    					<div class="vote{{ option.id }}">
+	    					{{ option.votes }}
+	    					</div>
+	    					<div class="option{{ option.id }}">
+	    					<input class="poll_vote" type="hidden" autocomplete="off" name="poll_message" value="{{ option.id }}">
+	    					<a id={{poll.id}} rel={{ option.id }} class="poll{{poll.id}}option{{ option.id }}" >{{ option.option_text }}</a>
+	    					</div>
+	    				
+	    				
+	    				</div>
+	    				
+						{% endfor %}
+						</form>
+						
+  </div>
+  <div class="panel-footer">
+  <div class="progress">
+  {% for option in poll.option_set.all %}
+  <div class="progress-bar-{{ forloop.counter }}" style="width: {{ option.percentage }}%"></div>
+
+  {% endfor %}
+</div>
+</div>
+</div>
+{% endfor %}
+{% else %}
+    	<p>No polls are available.</p>
+		{% endif %}
+		<!-- Login ends-->
+</div>
+
+  </div>
+  <div class="span2">
+	<div class="container">
+<div class="row">
+<div class="col-md-4">
+<div class="panel panel-default">
+<div class="panel-heading"> <span class="glyphicon glyphicon-list-alt"></span><b>Trending</b></div>
+<div class="panel-body">
+<div class="row">
+<div class="col-xs-12">
+<ul class="demo2">
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="panel-footer"> </div>
+</div>
+</div>
+</div>
+</div>
+ </div>
+</div>		
+</div>			
+    	
+		
+	
+                              
+
+	{% else %}
+		<!-- Logout starts-->
+		<div class="jumbotron">
+		<h1>Poll</h1>
+		<p>Connect with friends #</p>
+		<p>Ask questions in a fun way #</p>
+		<p>Ask for opinions #</p>
+		<p>
+			<a class="btn btn-primary btn-lg">Sign up now!</a>
+		</p>
+		</div>
+		<!-- Logout ends-->
+	{% endif %}
+
+</div>

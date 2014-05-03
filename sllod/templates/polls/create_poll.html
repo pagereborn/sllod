@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	{% load staticfiles %}
+    	<!--<script src="{% static  "overlay/media/javascripts/jquery-1.10.2.js" %}"></script>-->
+    	<script src="{% static  "overlay/media/javascripts/zepto-1.0.js" %}"></script>
+    	<script src="{% static  "js/jquery-1.11.0.js" %}"></script>
+		<script src="{% static  "js/poll.js" %}"></script>
+		<link href="{% static  "css/poll.css" %}" type="text/css" rel="stylesheet">
+		<!-- OverLay -->
+		
+		<link href="{% static  "overlay/media/stylesheets/bootstrap.css" %}" rel="stylesheet"/>
+        <link href="{% static  "overlay/media/stylesheets/font-awesome.css" %}" rel="stylesheet"/>
+        <link href="{% static  "overlay/media/stylesheets/main.css" %}" rel="stylesheet"/>       
+        <link href="{% static  "overlay/media/stylesheets/shCoreDefault.css" %}" rel="stylesheet"/>        
+        <script src="{% static  "overlay/media/javascripts/shCore.js" %}"></script>
+        <script src="{% static  "overlay/media/javascripts/shBrushJScript.js" %}"></script>
+        <script src="{% static  "overlay/media/javascripts/main.js" %}"></script>
+		<script src="{% static  "overlay/jquery.overlay.js" %}"></script>
+		
+        <title>Poll</title>
+    </head>
+
+    <body>
+    	{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+	{% else %}
+    <p>Welcome, new user. Please log in.</p>
+	{% endif %}
+    	<div id="page-wrap">
+        <h1>Add a Poll</h1>
+		
+        <form id="poll_form" name="poll_form" method="" action="">
+		
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                {{ field.errors }}
+                {{ field.help_text}}
+                {{ field }}
+            {% endfor %}
+			<input class="poll_message" type="hidden" autocomplete="off" name="poll_message" value="">
+            <br><input id="create_poll" type="button" name="submit" value="Create Poll" />
+        </form>
+        <div id="highlight" class="highlight">
+        </div>
+        <div id="all_polls">
+        {% if latest_poll_list %}
+       
+    	
+    	 
+    		{% for poll in latest_poll_list %}
+    			<div id="poll_box">
+    				<div id="created_by_box">
+    				{{poll.created_by}} asked:
+    				</div>
+    				<div id="message_box">
+	        		<a href="{% url 'polls:detail' poll.id %}">{{ poll.message }}</a>
+					</div>
+				{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+	
+					
+						{% csrf_token %}
+						{% for option in poll.option_set.all %}
+						
+						<form id="poll_form" action="{% url 'polls:vote' poll.id %}" method="post">
+						{% csrf_token %}
+	    				<div id="choice{{ option.id }}">
+	    					<div class="vote{{ option.id }}">
+	    					{{ option.votes }}
+	    					</div>
+	    					<div class="option{{ option.id }}">
+	    					<input class="poll_vote" type="hidden" autocomplete="off" name="poll_message" value="{{ option.id }}">
+	    					<a id={{poll.id}} rel={{ option.id }} class="poll{{poll.id}}option{{ option.id }}" href="#">{{ option.option_text }}</a>
+	    					</div>
+	    				
+	    				
+	    				</div>
+	    				
+						{% endfor %}
+				
+						</form>
+				</div>
+    		{% endfor %}
+    		
+    	
+		{% else %}
+    	<p>No polls are available.</p>
+		{% endif %}
+		</div>
+    </div>   
+    </body>
+
+</html>
+
