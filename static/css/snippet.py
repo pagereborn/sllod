@@ -1,0 +1,9 @@
+.nav > li.disabled > a {
+    color: #DDDDDD;
+}
+.nav > li.disabled > a:hover, .nav > li.disabled > a:focus {
+    background-color: rgba(0, 0, 0, 0);
+    color: #DDDDDD;
+    cursor: not-allowed;
+    text-decoration: none;
+}
