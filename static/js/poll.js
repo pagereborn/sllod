@@ -23,7 +23,14 @@ $(document).ready(function() {
 				success: function(result){
 					vote_id = ".vote" + option_id
 					$(vote_id).html(result);
-					$("." + overall).css("color","black")
+					$("." + overall).css("color","black");
+					$.ajax({
+					type: "GET",
+					url: "/sllod/get_polls/",
+					success: function(result){
+						$("#all_polls").html(result);
+					},
+					});
 				},
 		});
 		    

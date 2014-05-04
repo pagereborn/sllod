@@ -30,7 +30,7 @@
 <div class="navbar navbar-default navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
-			<a href="../" class="navbar-brand">Poll</a>
+			<a href="#" class="navbar-brand">Poll</a>
 			<button class="navbar-toggle" type="button" data-toggle="collapse"
 				data-target="#navbar-main">
 				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
@@ -43,38 +43,42 @@
 					data-toggle="dropdown" href="#" id="themes">Category <span
 						class="caret"></span></a>
 					<ul class="dropdown-menu" aria-labelledby="themes">
-						<li><a href="../default/">Mix</a></li>
+						<li><a href="#">Mix</a></li>
 						<li class="divider"></li>
-						<li><a href="../amelia/">Sports</a></li>
-						<li><a href="../cerulean/">Shopping</a></li>
-						<li><a href="../cosmo/">Social</a></li>
-						<li><a href="../cyborg/">Entertainment</a></li>
-						<li><a href="../darkly/">News</a></li>
-						<li><a href="../flatly/">Politic</a></li>
-						<li><a href="../journal/">Fashion</a></li>
+						<li><a href="#">Sports</a></li>
+						<li><a href="#">Shopping</a></li>
+						<li><a href="#">Social</a></li>
+						<li><a href="#">Entertainment</a></li>
+						<li><a href="#">News</a></li>
+						<li><a href="#">Politic</a></li>
+						<li><a href="#">Fashion</a></li>
 					</ul></li>
-				<li><a href="../help/">About</a></li>
-				<li><a href="http://news.bootswatch.com">How to</a></li>
+				<li><a href="#">About</a></li>
+				<li><a href="#">How to</a></li>
 				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#" id="download">Join <span
+					data-toggle="dropdown" href="#" id="download">More <span
 						class="caret"></span></a>
 					<ul class="dropdown-menu" aria-labelledby="download">
-						<li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
-						<li><a href="./bootstrap.css">bootstrap.css</a></li>
+						<li><a href="#">More</a></li>
+						<li><a href="#">More</a></li>
 						<li class="divider"></li>
-						<li><a href="./variables.less">variables.less</a></li>
-						<li><a href="./bootswatch.less">bootswatch.less</a></li>
+						<li><a href="#">More</a></li>
+						<li><a href="#">More</a></li>
 					</ul></li>
 			</ul>
 
 			<ul class="nav navbar-nav navbar-right">
 				{% if user.is_authenticated %}
-				<li><a href="account/logout">Log out</a></li> 
+				<form class="form col-md-12 center-block" action="account/logout/" method="post">
+			 {% csrf_token %}
+    			<input type="submit" name="get" class="submit-post" value="Logout" />
+			 </form>
 				{% else %}
-				<li><a href="account/login">Log in</a></li> 
+				<li><a href="account/login">Log in</a></li>
+				<li><a href="account/signup">Register</a></li> 
 				{% endif %}
 
-
+			 
 			</ul>
 
 		</div>

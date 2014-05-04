@@ -1,0 +1,1722 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: account_account; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_account (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    timezone character varying(100) NOT NULL,
+    language character varying(10) NOT NULL
+);
+
+
+ALTER TABLE public.account_account OWNER TO sllod;
+
+--
+-- Name: account_account_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_account_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_account_id_seq OWNER TO sllod;
+
+--
+-- Name: account_account_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_account_id_seq OWNED BY account_account.id;
+
+
+--
+-- Name: account_accountdeletion; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_accountdeletion (
+    id integer NOT NULL,
+    user_id integer,
+    email character varying(75) NOT NULL,
+    date_requested timestamp with time zone NOT NULL,
+    date_expunged timestamp with time zone
+);
+
+
+ALTER TABLE public.account_accountdeletion OWNER TO sllod;
+
+--
+-- Name: account_accountdeletion_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_accountdeletion_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_accountdeletion_id_seq OWNER TO sllod;
+
+--
+-- Name: account_accountdeletion_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_accountdeletion_id_seq OWNED BY account_accountdeletion.id;
+
+
+--
+-- Name: account_emailaddress; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_emailaddress (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    email character varying(75) NOT NULL,
+    verified boolean NOT NULL,
+    "primary" boolean NOT NULL
+);
+
+
+ALTER TABLE public.account_emailaddress OWNER TO sllod;
+
+--
+-- Name: account_emailaddress_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_emailaddress_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_emailaddress_id_seq OWNER TO sllod;
+
+--
+-- Name: account_emailaddress_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_emailaddress_id_seq OWNED BY account_emailaddress.id;
+
+
+--
+-- Name: account_emailconfirmation; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_emailconfirmation (
+    id integer NOT NULL,
+    email_address_id integer NOT NULL,
+    created timestamp with time zone NOT NULL,
+    sent timestamp with time zone,
+    key character varying(64) NOT NULL
+);
+
+
+ALTER TABLE public.account_emailconfirmation OWNER TO sllod;
+
+--
+-- Name: account_emailconfirmation_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_emailconfirmation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_emailconfirmation_id_seq OWNER TO sllod;
+
+--
+-- Name: account_emailconfirmation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_emailconfirmation_id_seq OWNED BY account_emailconfirmation.id;
+
+
+--
+-- Name: account_signupcode; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_signupcode (
+    id integer NOT NULL,
+    code character varying(64) NOT NULL,
+    max_uses integer NOT NULL,
+    expiry timestamp with time zone,
+    inviter_id integer,
+    email character varying(75) NOT NULL,
+    notes text NOT NULL,
+    sent timestamp with time zone,
+    created timestamp with time zone NOT NULL,
+    use_count integer NOT NULL,
+    CONSTRAINT account_signupcode_max_uses_check CHECK ((max_uses >= 0)),
+    CONSTRAINT account_signupcode_use_count_check CHECK ((use_count >= 0))
+);
+
+
+ALTER TABLE public.account_signupcode OWNER TO sllod;
+
+--
+-- Name: account_signupcode_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_signupcode_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_signupcode_id_seq OWNER TO sllod;
+
+--
+-- Name: account_signupcode_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_signupcode_id_seq OWNED BY account_signupcode.id;
+
+
+--
+-- Name: account_signupcoderesult; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE account_signupcoderesult (
+    id integer NOT NULL,
+    signup_code_id integer NOT NULL,
+    user_id integer NOT NULL,
+    "timestamp" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.account_signupcoderesult OWNER TO sllod;
+
+--
+-- Name: account_signupcoderesult_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE account_signupcoderesult_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.account_signupcoderesult_id_seq OWNER TO sllod;
+
+--
+-- Name: account_signupcoderesult_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE account_signupcoderesult_id_seq OWNED BY account_signupcoderesult.id;
+
+
+--
+-- Name: auth_group; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_group (
+    id integer NOT NULL,
+    name character varying(80) NOT NULL
+);
+
+
+ALTER TABLE public.auth_group OWNER TO sllod;
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_group_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
+
+
+--
+-- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_group_permissions (
+    id integer NOT NULL,
+    group_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_group_permissions OWNER TO sllod;
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_group_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_permissions_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_group_permissions_id_seq OWNED BY auth_group_permissions.id;
+
+
+--
+-- Name: auth_permission; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_permission (
+    id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    content_type_id integer NOT NULL,
+    codename character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.auth_permission OWNER TO sllod;
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_permission_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
+
+
+--
+-- Name: auth_user; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_user (
+    id integer NOT NULL,
+    password character varying(128) NOT NULL,
+    last_login timestamp with time zone NOT NULL,
+    is_superuser boolean NOT NULL,
+    username character varying(30) NOT NULL,
+    first_name character varying(30) NOT NULL,
+    last_name character varying(30) NOT NULL,
+    email character varying(75) NOT NULL,
+    is_staff boolean NOT NULL,
+    is_active boolean NOT NULL,
+    date_joined timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.auth_user OWNER TO sllod;
+
+--
+-- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_user_groups (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    group_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_groups OWNER TO sllod;
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_user_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_groups_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_user_groups_id_seq OWNED BY auth_user_groups.id;
+
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_user_id_seq OWNED BY auth_user.id;
+
+
+--
+-- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE auth_user_user_permissions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_user_permissions OWNER TO sllod;
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE auth_user_user_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_user_permissions_id_seq OWNER TO sllod;
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE auth_user_user_permissions_id_seq OWNED BY auth_user_user_permissions.id;
+
+
+--
+-- Name: django_admin_log; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE django_admin_log (
+    id integer NOT NULL,
+    action_time timestamp with time zone NOT NULL,
+    user_id integer NOT NULL,
+    content_type_id integer,
+    object_id text,
+    object_repr character varying(200) NOT NULL,
+    action_flag smallint NOT NULL,
+    change_message text NOT NULL,
+    CONSTRAINT django_admin_log_action_flag_check CHECK ((action_flag >= 0))
+);
+
+
+ALTER TABLE public.django_admin_log OWNER TO sllod;
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE django_admin_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_admin_log_id_seq OWNER TO sllod;
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
+
+
+--
+-- Name: django_content_type; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE django_content_type (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    app_label character varying(100) NOT NULL,
+    model character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.django_content_type OWNER TO sllod;
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE django_content_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_content_type_id_seq OWNER TO sllod;
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
+
+
+--
+-- Name: django_session; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE django_session (
+    session_key character varying(40) NOT NULL,
+    session_data text NOT NULL,
+    expire_date timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_session OWNER TO sllod;
+
+--
+-- Name: sllod_option; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE sllod_option (
+    id integer NOT NULL,
+    poll_id integer NOT NULL,
+    option_text character varying(200) NOT NULL,
+    votes integer NOT NULL,
+    percentage numeric(5,2)
+);
+
+
+ALTER TABLE public.sllod_option OWNER TO sllod;
+
+--
+-- Name: sllod_option_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE sllod_option_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sllod_option_id_seq OWNER TO sllod;
+
+--
+-- Name: sllod_option_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE sllod_option_id_seq OWNED BY sllod_option.id;
+
+
+--
+-- Name: sllod_optionvote; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE sllod_optionvote (
+    id integer NOT NULL,
+    poll_id integer NOT NULL,
+    option_id integer NOT NULL,
+    created_by_id integer NOT NULL,
+    has_changed boolean NOT NULL,
+    created_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public.sllod_optionvote OWNER TO sllod;
+
+--
+-- Name: sllod_optionvote_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE sllod_optionvote_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sllod_optionvote_id_seq OWNER TO sllod;
+
+--
+-- Name: sllod_optionvote_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE sllod_optionvote_id_seq OWNED BY sllod_optionvote.id;
+
+
+--
+-- Name: sllod_poll; Type: TABLE; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE TABLE sllod_poll (
+    id integer NOT NULL,
+    message character varying(200) NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    created_by_id integer NOT NULL,
+    share numeric(5,2)
+);
+
+
+ALTER TABLE public.sllod_poll OWNER TO sllod;
+
+--
+-- Name: sllod_poll_id_seq; Type: SEQUENCE; Schema: public; Owner: sllod
+--
+
+CREATE SEQUENCE sllod_poll_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sllod_poll_id_seq OWNER TO sllod;
+
+--
+-- Name: sllod_poll_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sllod
+--
+
+ALTER SEQUENCE sllod_poll_id_seq OWNED BY sllod_poll.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_account ALTER COLUMN id SET DEFAULT nextval('account_account_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_accountdeletion ALTER COLUMN id SET DEFAULT nextval('account_accountdeletion_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_emailaddress ALTER COLUMN id SET DEFAULT nextval('account_emailaddress_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_emailconfirmation ALTER COLUMN id SET DEFAULT nextval('account_emailconfirmation_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_signupcode ALTER COLUMN id SET DEFAULT nextval('account_signupcode_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_signupcoderesult ALTER COLUMN id SET DEFAULT nextval('account_signupcoderesult_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_group ALTER COLUMN id SET DEFAULT nextval('auth_group_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_group_permissions ALTER COLUMN id SET DEFAULT nextval('auth_group_permissions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_permission ALTER COLUMN id SET DEFAULT nextval('auth_permission_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user ALTER COLUMN id SET DEFAULT nextval('auth_user_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_groups ALTER COLUMN id SET DEFAULT nextval('auth_user_groups_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_user_permissions ALTER COLUMN id SET DEFAULT nextval('auth_user_user_permissions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY django_admin_log ALTER COLUMN id SET DEFAULT nextval('django_admin_log_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY django_content_type ALTER COLUMN id SET DEFAULT nextval('django_content_type_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_option ALTER COLUMN id SET DEFAULT nextval('sllod_option_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_optionvote ALTER COLUMN id SET DEFAULT nextval('sllod_optionvote_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_poll ALTER COLUMN id SET DEFAULT nextval('sllod_poll_id_seq'::regclass);
+
+
+--
+-- Data for Name: account_account; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_account (id, user_id, timezone, language) FROM stdin;
+1	1		en-us
+\.
+
+
+--
+-- Name: account_account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_account_id_seq', 1, true);
+
+
+--
+-- Data for Name: account_accountdeletion; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_accountdeletion (id, user_id, email, date_requested, date_expunged) FROM stdin;
+\.
+
+
+--
+-- Name: account_accountdeletion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_accountdeletion_id_seq', 1, false);
+
+
+--
+-- Data for Name: account_emailaddress; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_emailaddress (id, user_id, email, verified, "primary") FROM stdin;
+1	1	aw0750@gmail.com	f	t
+\.
+
+
+--
+-- Name: account_emailaddress_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_emailaddress_id_seq', 1, true);
+
+
+--
+-- Data for Name: account_emailconfirmation; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_emailconfirmation (id, email_address_id, created, sent, key) FROM stdin;
+\.
+
+
+--
+-- Name: account_emailconfirmation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_emailconfirmation_id_seq', 1, false);
+
+
+--
+-- Data for Name: account_signupcode; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_signupcode (id, code, max_uses, expiry, inviter_id, email, notes, sent, created, use_count) FROM stdin;
+\.
+
+
+--
+-- Name: account_signupcode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_signupcode_id_seq', 1, false);
+
+
+--
+-- Data for Name: account_signupcoderesult; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY account_signupcoderesult (id, signup_code_id, user_id, "timestamp") FROM stdin;
+\.
+
+
+--
+-- Name: account_signupcoderesult_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('account_signupcoderesult_id_seq', 1, false);
+
+
+--
+-- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_group (id, name) FROM stdin;
+\.
+
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_group_id_seq', 1, false);
+
+
+--
+-- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_group_permissions (id, group_id, permission_id) FROM stdin;
+\.
+
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_group_permissions_id_seq', 1, false);
+
+
+--
+-- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_permission (id, name, content_type_id, codename) FROM stdin;
+1	Can add log entry	1	add_logentry
+2	Can change log entry	1	change_logentry
+3	Can delete log entry	1	delete_logentry
+4	Can add permission	2	add_permission
+5	Can change permission	2	change_permission
+6	Can delete permission	2	delete_permission
+7	Can add group	3	add_group
+8	Can change group	3	change_group
+9	Can delete group	3	delete_group
+10	Can add user	4	add_user
+11	Can change user	4	change_user
+12	Can delete user	4	delete_user
+13	Can add content type	5	add_contenttype
+14	Can change content type	5	change_contenttype
+15	Can delete content type	5	delete_contenttype
+16	Can add session	6	add_session
+17	Can change session	6	change_session
+18	Can delete session	6	delete_session
+19	Can add poll	7	add_poll
+20	Can change poll	7	change_poll
+21	Can delete poll	7	delete_poll
+22	Can add option	8	add_option
+23	Can change option	8	change_option
+24	Can delete option	8	delete_option
+25	Can add option vote	9	add_optionvote
+26	Can change option vote	9	change_optionvote
+27	Can delete option vote	9	delete_optionvote
+28	Can add account	10	add_account
+29	Can change account	10	change_account
+30	Can delete account	10	delete_account
+31	Can add signup code	11	add_signupcode
+32	Can change signup code	11	change_signupcode
+33	Can delete signup code	11	delete_signupcode
+34	Can add signup code result	12	add_signupcoderesult
+35	Can change signup code result	12	change_signupcoderesult
+36	Can delete signup code result	12	delete_signupcoderesult
+37	Can add email address	13	add_emailaddress
+38	Can change email address	13	change_emailaddress
+39	Can delete email address	13	delete_emailaddress
+40	Can add email confirmation	14	add_emailconfirmation
+41	Can change email confirmation	14	change_emailconfirmation
+42	Can delete email confirmation	14	delete_emailconfirmation
+43	Can add account deletion	15	add_accountdeletion
+44	Can change account deletion	15	change_accountdeletion
+45	Can delete account deletion	15	delete_accountdeletion
+\.
+
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_permission_id_seq', 45, true);
+
+
+--
+-- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
+1	pbkdf2_sha256$12000$WC6F0U6ZUGut$EBoqjLvbu6VdoFv9uH87AIidFPSbp+odI0ulruvAPAA=	2014-05-04 00:08:52.362908-04	t	steven			aw0750@gmail.com	t	t	2014-05-02 17:20:25.049454-04
+\.
+
+
+--
+-- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_user_groups (id, user_id, group_id) FROM stdin;
+\.
+
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_user_groups_id_seq', 1, false);
+
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_user_id_seq', 1, true);
+
+
+--
+-- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
+\.
+
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('auth_user_user_permissions_id_seq', 1, false);
+
+
+--
+-- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY django_admin_log (id, action_time, user_id, content_type_id, object_id, object_repr, action_flag, change_message) FROM stdin;
+\.
+
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('django_admin_log_id_seq', 1, false);
+
+
+--
+-- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY django_content_type (id, name, app_label, model) FROM stdin;
+1	log entry	admin	logentry
+2	permission	auth	permission
+3	group	auth	group
+4	user	auth	user
+5	content type	contenttypes	contenttype
+6	session	sessions	session
+7	poll	sllod	poll
+8	option	sllod	option
+9	option vote	sllod	optionvote
+10	account	account	account
+11	signup code	account	signupcode
+12	signup code result	account	signupcoderesult
+13	email address	account	emailaddress
+14	email confirmation	account	emailconfirmation
+15	account deletion	account	accountdeletion
+\.
+
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('django_content_type_id_seq', 15, true);
+
+
+--
+-- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY django_session (session_key, session_data, expire_date) FROM stdin;
+scya79b4243dod7ydjvo5zb2ii3nm0yx	YWM4ZmRkZjdmNGQ5NWRkODE1OWRiYTJmZWI5OWM1ZTk1MzlhNmZiZDp7Il9hdXRoX3VzZXJfaWQiOjEsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX3Nlc3Npb25fZXhwaXJ5IjowfQ==	2014-05-16 17:20:54.215968-04
+0evpv0pdu7uu0lup0bdovqvemujmu026	YWM4ZmRkZjdmNGQ5NWRkODE1OWRiYTJmZWI5OWM1ZTk1MzlhNmZiZDp7Il9hdXRoX3VzZXJfaWQiOjEsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIiwiX3Nlc3Npb25fZXhwaXJ5IjowfQ==	2014-05-18 00:08:52.371143-04
+\.
+
+
+--
+-- Data for Name: sllod_option; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY sllod_option (id, poll_id, option_text, votes, percentage) FROM stdin;
+2	1	#steven	1	100.00
+1	1	#adison	0	0.00
+\.
+
+
+--
+-- Name: sllod_option_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('sllod_option_id_seq', 2, true);
+
+
+--
+-- Data for Name: sllod_optionvote; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY sllod_optionvote (id, poll_id, option_id, created_by_id, has_changed, created_at) FROM stdin;
+1	1	2	1	f	2014-05-02 18:53:41.808361-04
+\.
+
+
+--
+-- Name: sllod_optionvote_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('sllod_optionvote_id_seq', 2, true);
+
+
+--
+-- Data for Name: sllod_poll; Type: TABLE DATA; Schema: public; Owner: sllod
+--
+
+COPY sllod_poll (id, message, created_at, created_by_id, share) FROM stdin;
+1	#adison or #steven	2014-05-02 18:53:40.160443-04	1	100.00
+\.
+
+
+--
+-- Name: sllod_poll_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sllod
+--
+
+SELECT pg_catalog.setval('sllod_poll_id_seq', 1, true);
+
+
+--
+-- Name: account_account_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_account
+    ADD CONSTRAINT account_account_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_account_user_id_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_account
+    ADD CONSTRAINT account_account_user_id_key UNIQUE (user_id);
+
+
+--
+-- Name: account_accountdeletion_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_accountdeletion
+    ADD CONSTRAINT account_accountdeletion_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_emailaddress_email_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_emailaddress
+    ADD CONSTRAINT account_emailaddress_email_key UNIQUE (email);
+
+
+--
+-- Name: account_emailaddress_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_emailaddress
+    ADD CONSTRAINT account_emailaddress_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_emailconfirmation_key_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_emailconfirmation
+    ADD CONSTRAINT account_emailconfirmation_key_key UNIQUE (key);
+
+
+--
+-- Name: account_emailconfirmation_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_emailconfirmation
+    ADD CONSTRAINT account_emailconfirmation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_signupcode_code_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_signupcode
+    ADD CONSTRAINT account_signupcode_code_key UNIQUE (code);
+
+
+--
+-- Name: account_signupcode_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_signupcode
+    ADD CONSTRAINT account_signupcode_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_signupcoderesult_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY account_signupcoderesult
+    ADD CONSTRAINT account_signupcoderesult_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_name_key UNIQUE (name);
+
+
+--
+-- Name: auth_group_permissions_group_id_permission_id_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_group_id_permission_id_key UNIQUE (group_id, permission_id);
+
+
+--
+-- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_permission_content_type_id_codename_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_content_type_id_codename_key UNIQUE (content_type_id, codename);
+
+
+--
+-- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_groups_user_id_group_id_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_group_id_key UNIQUE (user_id, group_id);
+
+
+--
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_user_permissions_user_id_permission_id_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_user_id_permission_id_key UNIQUE (user_id, permission_id);
+
+
+--
+-- Name: auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_username_key UNIQUE (username);
+
+
+--
+-- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_content_type_app_label_model_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_app_label_model_key UNIQUE (app_label, model);
+
+
+--
+-- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY django_session
+    ADD CONSTRAINT django_session_pkey PRIMARY KEY (session_key);
+
+
+--
+-- Name: sllod_option_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY sllod_option
+    ADD CONSTRAINT sllod_option_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sllod_optionvote_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY sllod_optionvote
+    ADD CONSTRAINT sllod_optionvote_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sllod_optionvote_poll_id_option_id_created_by_id_key; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY sllod_optionvote
+    ADD CONSTRAINT sllod_optionvote_poll_id_option_id_created_by_id_key UNIQUE (poll_id, option_id, created_by_id);
+
+
+--
+-- Name: sllod_poll_pkey; Type: CONSTRAINT; Schema: public; Owner: sllod; Tablespace: 
+--
+
+ALTER TABLE ONLY sllod_poll
+    ADD CONSTRAINT sllod_poll_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: account_accountdeletion_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_accountdeletion_user_id ON account_accountdeletion USING btree (user_id);
+
+
+--
+-- Name: account_emailaddress_email_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_emailaddress_email_like ON account_emailaddress USING btree (email varchar_pattern_ops);
+
+
+--
+-- Name: account_emailaddress_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_emailaddress_user_id ON account_emailaddress USING btree (user_id);
+
+
+--
+-- Name: account_emailconfirmation_email_address_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_emailconfirmation_email_address_id ON account_emailconfirmation USING btree (email_address_id);
+
+
+--
+-- Name: account_emailconfirmation_key_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_emailconfirmation_key_like ON account_emailconfirmation USING btree (key varchar_pattern_ops);
+
+
+--
+-- Name: account_signupcode_code_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_signupcode_code_like ON account_signupcode USING btree (code varchar_pattern_ops);
+
+
+--
+-- Name: account_signupcode_inviter_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_signupcode_inviter_id ON account_signupcode USING btree (inviter_id);
+
+
+--
+-- Name: account_signupcoderesult_signup_code_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_signupcoderesult_signup_code_id ON account_signupcoderesult USING btree (signup_code_id);
+
+
+--
+-- Name: account_signupcoderesult_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX account_signupcoderesult_user_id ON account_signupcoderesult USING btree (user_id);
+
+
+--
+-- Name: auth_group_name_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_group_name_like ON auth_group USING btree (name varchar_pattern_ops);
+
+
+--
+-- Name: auth_group_permissions_group_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_group_id ON auth_group_permissions USING btree (group_id);
+
+
+--
+-- Name: auth_group_permissions_permission_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_permission_id ON auth_group_permissions USING btree (permission_id);
+
+
+--
+-- Name: auth_permission_content_type_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_permission_content_type_id ON auth_permission USING btree (content_type_id);
+
+
+--
+-- Name: auth_user_groups_group_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_group_id ON auth_user_groups USING btree (group_id);
+
+
+--
+-- Name: auth_user_groups_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_user_id ON auth_user_groups USING btree (user_id);
+
+
+--
+-- Name: auth_user_user_permissions_permission_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_permission_id ON auth_user_user_permissions USING btree (permission_id);
+
+
+--
+-- Name: auth_user_user_permissions_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_user_id ON auth_user_user_permissions USING btree (user_id);
+
+
+--
+-- Name: auth_user_username_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX auth_user_username_like ON auth_user USING btree (username varchar_pattern_ops);
+
+
+--
+-- Name: django_admin_log_content_type_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_content_type_id ON django_admin_log USING btree (content_type_id);
+
+
+--
+-- Name: django_admin_log_user_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_user_id ON django_admin_log USING btree (user_id);
+
+
+--
+-- Name: django_session_expire_date; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX django_session_expire_date ON django_session USING btree (expire_date);
+
+
+--
+-- Name: django_session_session_key_like; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX django_session_session_key_like ON django_session USING btree (session_key varchar_pattern_ops);
+
+
+--
+-- Name: sllod_option_poll_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX sllod_option_poll_id ON sllod_option USING btree (poll_id);
+
+
+--
+-- Name: sllod_optionvote_created_by_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX sllod_optionvote_created_by_id ON sllod_optionvote USING btree (created_by_id);
+
+
+--
+-- Name: sllod_optionvote_option_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX sllod_optionvote_option_id ON sllod_optionvote USING btree (option_id);
+
+
+--
+-- Name: sllod_optionvote_poll_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX sllod_optionvote_poll_id ON sllod_optionvote USING btree (poll_id);
+
+
+--
+-- Name: sllod_poll_created_by_id; Type: INDEX; Schema: public; Owner: sllod; Tablespace: 
+--
+
+CREATE INDEX sllod_poll_created_by_id ON sllod_poll USING btree (created_by_id);
+
+
+--
+-- Name: account_account_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_account
+    ADD CONSTRAINT account_account_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_accountdeletion_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_accountdeletion
+    ADD CONSTRAINT account_accountdeletion_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_emailaddress_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_emailaddress
+    ADD CONSTRAINT account_emailaddress_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_emailconfirmation_email_address_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_emailconfirmation
+    ADD CONSTRAINT account_emailconfirmation_email_address_id_fkey FOREIGN KEY (email_address_id) REFERENCES account_emailaddress(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_signupcode_inviter_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_signupcode
+    ADD CONSTRAINT account_signupcode_inviter_id_fkey FOREIGN KEY (inviter_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_signupcoderesult_signup_code_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_signupcoderesult
+    ADD CONSTRAINT account_signupcoderesult_signup_code_id_fkey FOREIGN KEY (signup_code_id) REFERENCES account_signupcode(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: account_signupcoderesult_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY account_signupcoderesult
+    ADD CONSTRAINT account_signupcoderesult_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: auth_group_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: auth_user_groups_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_group_id_fkey FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: auth_user_user_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: content_type_id_refs_id_93d2d1f8; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT content_type_id_refs_id_93d2d1f8 FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: content_type_id_refs_id_d043b34a; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT content_type_id_refs_id_d043b34a FOREIGN KEY (content_type_id) REFERENCES django_content_type(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: group_id_refs_id_f4b32aac; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT group_id_refs_id_f4b32aac FOREIGN KEY (group_id) REFERENCES auth_group(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sllod_option_poll_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_option
+    ADD CONSTRAINT sllod_option_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES sllod_poll(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sllod_optionvote_created_by_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_optionvote
+    ADD CONSTRAINT sllod_optionvote_created_by_id_fkey FOREIGN KEY (created_by_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sllod_optionvote_option_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_optionvote
+    ADD CONSTRAINT sllod_optionvote_option_id_fkey FOREIGN KEY (option_id) REFERENCES sllod_option(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sllod_optionvote_poll_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_optionvote
+    ADD CONSTRAINT sllod_optionvote_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES sllod_poll(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: sllod_poll_created_by_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY sllod_poll
+    ADD CONSTRAINT sllod_poll_created_by_id_fkey FOREIGN KEY (created_by_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: user_id_refs_id_40c41112; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT user_id_refs_id_40c41112 FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: user_id_refs_id_4dc23c39; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT user_id_refs_id_4dc23c39 FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: user_id_refs_id_c0d12874; Type: FK CONSTRAINT; Schema: public; Owner: sllod
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT user_id_refs_id_c0d12874 FOREIGN KEY (user_id) REFERENCES auth_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+

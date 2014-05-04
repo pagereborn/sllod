@@ -1,4 +1,4 @@
-       {% if latest_poll_list %}
+        {% if latest_poll_list %}
        
     	
     	 
@@ -39,7 +39,7 @@
   <div class="panel-footer">
   <div class="progress">
   {% for option in poll.option_set.all %}
-  <div class="progress-bar {{ forloop.counter }}" style="width: {{ option.votes }}00%"></div>
+  <div class="progress-bar-{{ forloop.counter }}" style="width: {{ option.percentage }}%"></div>
 
   {% endfor %}
 </div>
