@@ -2,15 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from sllod.models import Poll, Option, OptionVote
 from sllod.forms import PollForm
-from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
-from django import forms
 from django.utils import timezone
-from django.utils import simplejson
 from django.db import IntegrityError
-from django.db.models import Avg,Sum
-from django.views.generic.detail import BaseDetailView, \
-    SingleObjectTemplateResponseMixin
+from django.db.models import Sum
 # Create your views here.
 
 def index(request):
